@@ -9,4 +9,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
+    path('api/projects/', ProjectAPIList.as_view(), name='projects'),
+    path('api/projects/create/', ProjectAPICreate.as_view(), name='create_project'),
+
 ]

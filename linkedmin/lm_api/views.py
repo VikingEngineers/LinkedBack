@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import ProjectSerializer, ProfileSerializer
 from lm_projects.models import Project, Tag, Review
 from lm_users.models import Profile
-from rest_framework import mixins
+from rest_framework import mixins, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view
 from rest_framework.viewsets import GenericViewSet
@@ -20,10 +20,21 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
 
         return token
-
+    
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+
+class ProjectAPIList(generics.ListAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    
+
+class ProjectAPICreate(generics.CreateAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 @api_view(['GET'])

@@ -27,7 +27,6 @@ class ProjectSerializer(serializers.ModelSerializer):
     # owner = ProfileSerializer(many=False)
     # tags = TagSerializer(many=True)
     # reviews = serializers.SerializerMethodField()
-    owner = serializers.HiddenField(default=serializers.CurrentUserDefault)
 
     class Meta:
         model = Project
