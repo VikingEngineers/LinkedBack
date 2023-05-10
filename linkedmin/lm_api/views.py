@@ -1,7 +1,7 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .serializers import ProjectSerializer, ProfileSerializer
+from .serializers import *
 from lm_projects.models import Project, Tag, Review
 from lm_users.models import Profile
 from rest_framework import mixins, generics
@@ -22,29 +22,52 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
 
         return token
-    
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-# Project CRUD functionality
 
-
+# read, update, delete a project
 class ProjectAPIDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = (IsOwnerOrReadOnly, )
 
 
+# get a list of all projects
 class ProjectAPIList(generics.ListAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
 
+# create a project
 class ProjectAPICreate(generics.CreateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+
+# get tag list
+class TagAPIList(generics.ListAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+
+# get all reviews of a project
+class ReviewAPIList(generics.ListAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ProjectSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(project=self.kwargs['pk'])
+
+
+# read, update, delete a review
+class ReviewAPIDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = (IsOwnerOrReadOnly, )
 
 
 @api_view(['GET'])
