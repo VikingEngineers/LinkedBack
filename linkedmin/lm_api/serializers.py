@@ -4,6 +4,7 @@ from lm_users.models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     class Meta:
         model = Profile
         fields = '__all__'

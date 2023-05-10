@@ -1,3 +1,4 @@
+from django.dispatch import receiver
 from .models import Profile
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
@@ -17,6 +18,7 @@ def createProfile(sender, instance, created, **kwargs):
             email=user.email,
             name=user.first_name,
         )
+        print('profile created')
 
         subject = 'Welcome to LinkedMin'
         message = 'We are glad you are here!'

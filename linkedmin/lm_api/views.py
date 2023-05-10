@@ -10,6 +10,8 @@ from rest_framework.decorators import action, api_view
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
+from .permissions import *
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -25,11 +27,19 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
+# Project CRUD functionality
+
+
+class ProjectAPIDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    permission_classes = (IsOwnerOrReadOnly, )
+
 
 class ProjectAPIList(generics.ListAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    
+
 
 class ProjectAPICreate(generics.CreateAPIView):
     queryset = Project.objects.all()

@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-import uuid
 
 # profile model for additional user information
 # (1-to-1 relationship with Django User model)
