@@ -64,7 +64,7 @@ class ReviewAPIList(generics.ListAPIView):
 
 
 # read, update, delete a review
-class ReviewAPIDetail(generics.RetrieveUpdateDestroyAPIView):
+class ReviewAPIDetail(generics.RetrieveDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = (IsOwnerOrReadOnly, )
@@ -73,8 +73,22 @@ class ReviewAPIDetail(generics.RetrieveUpdateDestroyAPIView):
 @api_view(['GET'])
 def getRoutes(request):
     routes = [
-        {'POST': 'api/users/token'},
-        {'POST': 'api/users/token/refresh'},
+        {'POST': 'api/users/token/'},
+        {'POST': 'api/users/token/refresh/'},
+
+        {'GET': 'api/projects/'},
+        {'POST': 'api/projects/create/'},
+
+        {'GET': 'api/projects/<str:pk>'},
+        {'PUT': 'api/projects/<str:pk>'},
+        {'DELETE': 'api/projects/<str:pk>'},
+
+        {'GET': 'api/projects/<str:pk>/reviews/'},
+
+        {'GET': 'api/review/<str:pk>/'},
+        {'DELETE': 'api/review/<str:pk>/'},
+
+        {'GET': 'api/tags/'},
     ]
 
     return Response(routes)
