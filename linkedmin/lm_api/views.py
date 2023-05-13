@@ -14,14 +14,14 @@ from .permissions import *
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
 
-        # Add custom claims
-        token['username'] = user.username
+    def validate(self, attrs):
+        data = super().validate(attrs)
 
-        return token
+        data["username"] = self.user.username
+        data["email"] = self.user.email
+
+        return data
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -79,15 +79,16 @@ class ReviewAPICreate(generics.CreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
     def create(self, request, *args, **kwargs):
-        owner = request.user
+        owner = Profile.objects.get(username=str(request.user))
         project = Project.objects.get(id=self.kwargs['pk'])
-        data = {
+
+        review = {
             "owner": owner.id,
             "project": project.id,
-            "body": request.POST.get('body'),
-            "value": request.POST.get('value')
+            "body": request.data['body'],
+            "value": request.data['value']
         }
-        _serializer = self.serializer_class(data=request.data)
+        _serializer = self.serializer_class(data=review)
         if _serializer.is_valid():
             _serializer.save()
             return Response(data=_serializer.data, status=status.HTTP_201_CREATED)  # NOQA
@@ -105,6 +106,12 @@ class ReviewAPIDetail(generics.RetrieveDestroyAPIView):
 class ProfileAPIList(generics.ListAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+
+
+class ProfileAPIDetail(generics.RetrieveUpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = (IsOwnerOrReadOnly, )
 
 
 @api_view(['GET'])
@@ -126,6 +133,7 @@ def getRoutes(request):
         {'DELETE': 'api/review/<str:pk>/'},
 
         {'GET': 'api/tags/'},
+        {'GET': 'api/profiles/'},
     ]
 
     return Response(routes)

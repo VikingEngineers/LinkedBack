@@ -13,7 +13,7 @@ def createProfile(sender, instance, created, **kwargs):
     if created:
         user = instance
         profile = Profile.objects.create(
-            user=user,
+            owner=user,
             username=user.username,
             email=user.email,
             name=user.first_name,
@@ -34,7 +34,7 @@ def createProfile(sender, instance, created, **kwargs):
 
 def updateUser(sender, instance, created, **kwargs):
     profile = instance
-    user = profile.user
+    user = profile.owner
 
     if created == False:
         user.first_name = profile.name
