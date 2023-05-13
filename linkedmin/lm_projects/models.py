@@ -59,7 +59,6 @@ class Review(models.Model):
     body = models.TextField(null=True, blank=True)
     value = models.CharField(max_length=200, choices=VOTE_TYPE)
     created = models.DateTimeField(auto_now_add=True)
-    id = models.IntegerField(unique=True, primary_key=True, editable=False)
 
     class Meta:
         unique_together = [['owner', 'project']]
@@ -71,7 +70,6 @@ class Review(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=200)
     created = models.DateTimeField(auto_now_add=True)
-    id = models.IntegerField(unique=True, primary_key=True, editable=False)
 
     def __str__(self):
         return self.name
