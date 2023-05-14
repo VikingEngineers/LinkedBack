@@ -25,7 +25,9 @@ urlpatterns = [
     path('api/tags/create/', TagAPICreate.as_view(), name='create_tag'),
 
     path('api/profiles/', ProfileAPIList.as_view(), name='profiles'),
-    path('api/profile/<str:pk>/', ProfileAPIDetail.as_view(), name='profiles'),
+    path('api/profile/<str:pk>/', ProfileAPIDetail.as_view(), name='profile'),
+
+    path('api/messages/', MessageAPIList.as_view(), name='messages'),
 
 
 ]

@@ -50,9 +50,8 @@ class TagAPIList(generics.ListAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
+
 # create a tag
-
-
 class TagAPICreate(generics.CreateAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -67,9 +66,8 @@ class ReviewAPIList(generics.ListAPIView):
     def get_queryset(self):
         return self.queryset.filter(project=self.kwargs['pk'])
 
+
 # create review for a specific project
-
-
 class ReviewAPICreate(generics.CreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
@@ -109,6 +107,15 @@ class ProfileAPIDetail(generics.RetrieveUpdateAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = (IsOwnerOrReadOnly, )
+
+
+class MessageAPIList(generics.ListAPIView):
+    queryset = Message.objects.all()
+    serializer_class = ProjectSerializer
+    permission_classes = (IsOwnerOrAdmin, )
+
+    # def get_queryset(self):
+    #     return self.queryset.filter(sender=self.user)
 
 
 @api_view(['GET'])

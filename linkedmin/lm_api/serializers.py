@@ -1,17 +1,13 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from lm_projects.models import Project, Tag, Review
-from lm_users.models import Profile
+from lm_users.models import Profile, Message, Skill
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ValidationError
 import django.contrib.auth.password_validation as validators
-from rest_framework import status
-from rest_framework.response import Response
 
 # return custom token and user info
-
-
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
@@ -75,7 +71,6 @@ class UserSerializerWithToken(UserSerializer):
         return str(token.access_token)
 
     def create(self, validated_data):
-        print(validated_data)
         user = User(
             email=validated_data['email'],
             username=validated_data['username'],
@@ -115,3 +110,10 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = '__all__'
+
+
+class MessageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Message
+        fields = "__all__"
