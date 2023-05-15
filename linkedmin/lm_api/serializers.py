@@ -3,6 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from lm_projects.models import Project, Tag, Review
 from lm_users.models import Profile, Message, Skill
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ValidationError
 import django.contrib.auth.password_validation as validators
@@ -74,7 +75,7 @@ class UserSerializerWithToken(UserSerializer):
         user = User(
             email=validated_data['email'],
             username=validated_data['username'],
-            password=validated_data['password'],
+            password=make_password(validated_data['password']),
         )
         user.save()
         return user
