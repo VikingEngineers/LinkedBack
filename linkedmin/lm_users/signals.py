@@ -47,8 +47,8 @@ def updateUser(sender, instance, created, **kwargs):
 def delete_user(sender, instance, **kwargs):
     try:
         print("Deleting user...")
-        user = instance.user
-        user.delete()
+        owner = instance.owner
+        owner.delete()
     except User.DoesNotExist:
         print("User does not exist. This has to do with the relationship between User and Profile.")
 

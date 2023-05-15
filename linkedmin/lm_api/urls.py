@@ -7,7 +7,8 @@ urlpatterns = [
     path('', getRoutes, name='api_routes'),
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+
+    path('api/register/', UserAPICreate.as_view(), name='register'),
 
     path('api/projects/', ProjectAPIList.as_view(), name='projects'),
     path('api/projects/create/', ProjectAPICreate.as_view(), name='create_project'),
@@ -24,7 +25,9 @@ urlpatterns = [
     path('api/tags/create/', TagAPICreate.as_view(), name='create_tag'),
 
     path('api/profiles/', ProfileAPIList.as_view(), name='profiles'),
-    path('api/profile/<str:pk>/', ProfileAPIDetail.as_view(), name='profiles'),
+    path('api/profile/<str:pk>/', ProfileAPIDetail.as_view(), name='profile'),
+
+    path('api/messages/', MessageAPIList.as_view(), name='messages'),
 
 
 ]

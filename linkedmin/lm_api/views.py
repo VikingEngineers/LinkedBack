@@ -1,31 +1,28 @@
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .serializers import *
 from lm_projects.models import Project, Tag, Review
 from lm_users.models import Profile
-from rest_framework import mixins, generics, status
+from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.decorators import action, api_view
-from rest_framework.viewsets import GenericViewSet
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
+from django.contrib.auth.hashers import make_password
+from django.db.utils import IntegrityError
 
 from .permissions import *
 
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-
-    def validate(self, attrs):
-        data = super().validate(attrs)
-
-        data["username"] = self.user.username
-        data["email"] = self.user.email
-
-        return data
-
-
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+
+# register user
+class UserAPICreate(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializerWithToken
 
 
 # read, update, delete a project
@@ -53,9 +50,8 @@ class TagAPIList(generics.ListAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
+
 # create a tag
-
-
 class TagAPICreate(generics.CreateAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -70,9 +66,8 @@ class ReviewAPIList(generics.ListAPIView):
     def get_queryset(self):
         return self.queryset.filter(project=self.kwargs['pk'])
 
+
 # create review for a specific project
-
-
 class ReviewAPICreate(generics.CreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
@@ -112,6 +107,15 @@ class ProfileAPIDetail(generics.RetrieveUpdateAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = (IsOwnerOrReadOnly, )
+
+
+class MessageAPIList(generics.ListAPIView):
+    queryset = Message.objects.all()
+    serializer_class = ProjectSerializer
+    permission_classes = (IsOwnerOrAdmin, )
+
+    # def get_queryset(self):
+    #     return self.queryset.filter(sender=self.user)
 
 
 @api_view(['GET'])
