@@ -31,6 +31,8 @@ urlpatterns = [
 
     path('api/search/projects/', SearchProjectsAPIList.as_view(),
          name='search_projects'),
+    path('api/search/profiles/', SearchProfilesAPIList.as_view(),
+         name='search_profiles'),
 
 
 ]
