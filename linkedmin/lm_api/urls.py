@@ -29,5 +29,8 @@ urlpatterns = [
 
     path('api/messages/', MessageAPIList.as_view(), name='messages'),
 
+    path('api/search/projects/', SearchProjectsAPIList.as_view(),
+         name='search_projects'),
+
 
 ]

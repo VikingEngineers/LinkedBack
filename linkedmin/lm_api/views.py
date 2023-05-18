@@ -9,8 +9,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from django.contrib.auth.hashers import make_password
-from django.db.utils import IntegrityError
+from django.db.models import Q
 
 from .permissions import *
 
@@ -116,6 +115,30 @@ class MessageAPIList(generics.ListAPIView):
 
     # def get_queryset(self):
     #     return self.queryset.filter(sender=self.user)
+
+
+class SearchProjectsAPIList(generics.ListAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+
+    def get_queryset(self):
+        search_query = ''
+        print(self.request.GET.get('search_query', False))
+
+        if (self.request.GET.get('search_query', False)):
+            search_query = self.request.GET.get('search_query')
+
+        return self.queryset.distinct().filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(owner__name__icontains=search_query)
+        )
+
+    # developers = Profile.objects.distinct().filter(
+    #     Q(name__icontains=search_query) |
+    #     Q(description__icontains=search_query) |
+    #     Q(owner__name__icontains=search_query)
+    #     )
 
 
 @api_view(['GET'])
