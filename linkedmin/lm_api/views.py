@@ -108,13 +108,17 @@ class ProfileAPIDetail(generics.RetrieveUpdateAPIView):
     permission_classes = (IsOwnerOrReadOnly, )
 
 
-class MessageAPIList(generics.ListAPIView):
+class MessageAPIDetail(generics.ListCreateAPIView):
     queryset = Message.objects.all()
-    serializer_class = ProjectSerializer
+    serializer_class = MessageSerializer
     permission_classes = (IsOwnerOrAdmin, )
 
-    # def get_queryset(self):
-    #     return self.queryset.filter(sender=self.user)
+    def get_queryset(self):
+        user = Profile.objects.get(owner=self.request.user)
+        return self.queryset.filter(
+            Q(sender=user) |
+            Q(recipient=user)
+        )
 
 
 class SearchProjectsAPIList(generics.ListAPIView):
@@ -177,7 +181,7 @@ def getRoutes(request):
         {'GET': 'api/profiles/<str:pk>/'},
         {'PUT': 'api/profiles/<str:pk>/'},
 
-        # {'GET': 'api/messages/'},
+        {'GET': 'api/messages/'},
 
         {'GET': 'api/search/projects/'},
         {'GET': 'api/search/profiles/'},

@@ -35,7 +35,6 @@ class Skill(models.Model):
     name = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    id = models.IntegerField(unique=True, primary_key=True, editable=False)
 
     def __str__(self):
         return str(self.name)
@@ -52,7 +51,6 @@ class Message(models.Model):
     body = models.TextField()
     is_read = models.BooleanField(default=False, null=True)
     created = models.DateTimeField(auto_now_add=True)
-    id = models.IntegerField(unique=True, primary_key=True, editable=False)
 
     def __str__(self):
         return self.subject
