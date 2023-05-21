@@ -113,6 +113,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
 class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:

@@ -60,7 +60,7 @@ class TagAPICreate(generics.CreateAPIView):
 # get all reviews of a project
 class ReviewAPIList(generics.ListAPIView):
     queryset = Review.objects.all()
-    serializer_class = ProjectSerializer
+    serializer_class = ReviewSerializer
 
     def get_queryset(self):
         return self.queryset.filter(project=self.kwargs['pk'])
