@@ -4,7 +4,7 @@ import logging
 class LogRequestsMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger(__name__)
 
     def __call__(self, request):
         self.logger.debug(
