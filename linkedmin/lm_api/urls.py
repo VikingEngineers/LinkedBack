@@ -27,7 +27,12 @@ urlpatterns = [
     path('api/profiles/', ProfileAPIList.as_view(), name='profiles'),
     path('api/profile/<str:pk>/', ProfileAPIDetail.as_view(), name='profile'),
 
-    path('api/messages/', MessageAPIList.as_view(), name='messages'),
+    path('api/messages/', MessageAPIDetail.as_view(), name='messages'),
+
+    path('api/search/projects/', SearchProjectsAPIList.as_view(),
+         name='search_projects'),
+    path('api/search/profiles/', SearchProfilesAPIList.as_view(),
+         name='search_profiles'),
 
 
 ]

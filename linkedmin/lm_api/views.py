@@ -1,18 +1,17 @@
 
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-from .serializers import *
-from lm_projects.models import Project, Tag, Review
-from lm_users.models import Profile
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from django.contrib.auth.hashers import make_password
-from django.db.utils import IntegrityError
-
+from .serializers import *
 from .permissions import *
+
+from lm_projects.models import Project, Tag, Review
+from lm_users.models import Profile
+
+from django.db.models import Q
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -61,7 +60,7 @@ class TagAPICreate(generics.CreateAPIView):
 # get all reviews of a project
 class ReviewAPIList(generics.ListAPIView):
     queryset = Review.objects.all()
-    serializer_class = ProjectSerializer
+    serializer_class = ReviewSerializer
 
     def get_queryset(self):
         return self.queryset.filter(project=self.kwargs['pk'])
@@ -109,13 +108,52 @@ class ProfileAPIDetail(generics.RetrieveUpdateAPIView):
     permission_classes = (IsOwnerOrReadOnly, )
 
 
-class MessageAPIList(generics.ListAPIView):
+class MessageAPIDetail(generics.ListCreateAPIView):
     queryset = Message.objects.all()
-    serializer_class = ProjectSerializer
+    serializer_class = MessageSerializer
     permission_classes = (IsOwnerOrAdmin, )
 
-    # def get_queryset(self):
-    #     return self.queryset.filter(sender=self.user)
+    def get_queryset(self):
+        user = Profile.objects.get(owner=self.request.user)
+        return self.queryset.filter(
+            Q(sender=user) |
+            Q(recipient=user)
+        )
+
+
+class SearchProjectsAPIList(generics.ListAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+
+    def get_queryset(self):
+        search_query = ''
+        print(self.request.GET.get('search_query', False))
+
+        if (self.request.GET.get('search_query', False)):
+            search_query = self.request.GET.get('search_query')
+
+        return self.queryset.distinct().filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(owner__name__icontains=search_query)
+        )
+
+
+class SearchProfilesAPIList(generics.ListAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+    def get_queryset(self):
+        search_query = ''
+        print(self.request.GET.get('search_query', False))
+
+        if (self.request.GET.get('search_query', False)):
+            search_query = self.request.GET.get('search_query')
+
+        return self.queryset.filter(
+            Q(name__icontains=search_query) |
+            Q(username__icontains=search_query)
+        )
 
 
 @api_view(['GET'])
@@ -137,7 +175,16 @@ def getRoutes(request):
         {'DELETE': 'api/review/<str:pk>/'},
 
         {'GET': 'api/tags/'},
+        {'POST': 'api/tags/create'},
+
         {'GET': 'api/profiles/'},
+        {'GET': 'api/profiles/<str:pk>/'},
+        {'PUT': 'api/profiles/<str:pk>/'},
+
+        {'GET': 'api/messages/'},
+
+        {'GET': 'api/search/projects/'},
+        {'GET': 'api/search/profiles/'},
     ]
 
     return Response(routes)
