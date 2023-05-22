@@ -1,4 +1,6 @@
 from rest_framework import permissions
+from django.contrib.auth.models import User
+from lm_users.models import Profile
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
@@ -25,8 +27,9 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        # Instance must have an attribute named `owner`.
-        return obj.owner == request.user
+        else:
+            profile = Profile.objects.get(owner=request.user)
+            return bool(obj.owner == request.user or obj.owner == profile)
 
 
 class IsOwnerOrAdmin(permissions.BasePermission):
