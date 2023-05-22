@@ -166,7 +166,7 @@ def getRoutes(request):
         {'POST': 'api/projects/create/'}, #создание проекта
 
         {'GET': 'api/projects/<str:pk>'}, #инфа о проекте (по айди)
-        {'PUT': 'api/projects/<str:pk>'}, #редактировать проект
+        {'PATCH': 'api/projects/<str:pk>'}, #редактировать проект
         {'DELETE': 'api/projects/<str:pk>'}, #удалить проект
 
         {'GET': 'api/projects/<str:pk>/reviews/'},
@@ -179,7 +179,7 @@ def getRoutes(request):
 
         {'GET': 'api/profiles/'},
         {'GET': 'api/profiles/<str:pk>/'},
-        {'PUT': 'api/profiles/<str:pk>/'},
+        {'PATCH': 'api/profiles/<str:pk>/'},
 
         {'GET': 'api/messages/'},
 

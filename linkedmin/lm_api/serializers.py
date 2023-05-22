@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from linkedmin.lm_projects.forms import ProjectForm
+from linkedmin.lm_users.forms import ProfileForm
 from lm_projects.models import Project, Tag, Review
 from lm_users.models import Profile, Message, Skill
 from django.contrib.auth.models import User
@@ -7,6 +9,8 @@ from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ValidationError
 import django.contrib.auth.password_validation as validators
+from rest_framework import status
+from rest_framework.response import Response
 
 # return custom token and user info
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -87,6 +91,14 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = "__all__"
 
+    def patch(self, request, *args, **kwargs):
+        if request.FILES:
+            form = ProfileForm(request.POST, request.FILES)
+
+            if form.is_valid():
+                form.save
+
+
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
@@ -111,6 +123,13 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = '__all__'
+
+    def patch(self, request, *args, **kwargs):
+        if request.FILES:
+            form = ProjectForm(request.POST, request.FILES)
+
+            if form.is_valid():
+                form.save
 
 
 
