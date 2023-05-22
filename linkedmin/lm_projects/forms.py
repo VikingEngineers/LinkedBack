@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from linkedmin.lm_projects.models import Project
+from lm_projects.models import Project
 
 
 class ProjectForm(ModelForm):

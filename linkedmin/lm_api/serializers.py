@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from linkedmin.lm_projects.forms import ProjectForm
-from linkedmin.lm_users.forms import ProfileForm
+from lm_projects.forms import ProjectForm
+from lm_users.forms import ProfileForm
 from lm_projects.models import Project, Tag, Review
 from lm_users.models import Profile, Message, Skill
 from django.contrib.auth.models import User
