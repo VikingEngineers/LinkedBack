@@ -92,12 +92,12 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def patch(self, request, *args, **kwargs):
+        form = ProfileForm(request.POST)
+        
         if request.FILES:
             form = ProfileForm(request.POST, request.FILES)
-
-            if form.is_valid():
-                form.save
-
+        if form.is_valid():
+            form.save
 
 
 class ReviewSerializer(serializers.ModelSerializer):

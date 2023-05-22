@@ -11,5 +11,7 @@ class LogRequestsMiddleware:
             f"Incoming request: {request.method} {request.get_full_path()}")
         for header, value in request.headers.items():
             self.logger.debug(f"Header: {header} = {value}")
+        if request.FILES:
+            self.logger.debug("There are files")
         response = self.get_response(request)
         return response
