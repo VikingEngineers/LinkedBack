@@ -159,15 +159,15 @@ class SearchProfilesAPIList(generics.ListAPIView):
 @api_view(['GET'])
 def getRoutes(request):
     routes = [
-        {'POST': 'api/users/token/'},
-        {'POST': 'api/users/token/refresh/'},
+        {'POST': 'api/users/token/'}, #авторизация
+        {'POST': 'api/users/token/refresh/'}, #рефреш токена авторизации (пока не используется)
 
-        {'GET': 'api/projects/'},
-        {'POST': 'api/projects/create/'},
+        {'GET': 'api/projects/'}, #список всех проектов
+        {'POST': 'api/projects/create/'}, #создание проекта
 
-        {'GET': 'api/projects/<str:pk>'},
-        {'PUT': 'api/projects/<str:pk>'},
-        {'DELETE': 'api/projects/<str:pk>'},
+        {'GET': 'api/projects/<str:pk>'}, #инфа о проекте (по айди)
+        {'PUT': 'api/projects/<str:pk>'}, #редактировать проект
+        {'DELETE': 'api/projects/<str:pk>'}, #удалить проект
 
         {'GET': 'api/projects/<str:pk>/reviews/'},
 

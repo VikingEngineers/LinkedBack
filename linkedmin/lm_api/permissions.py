@@ -38,4 +38,5 @@ class IsOwnerOrAdmin(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        return bool(obj.owner == request.user or request.user.is_staff)
+        profile = Profile.objects.get(owner=request.user)
+        return bool(obj.owner == request.user or obj.owner == profile or request.user.is_staff)
