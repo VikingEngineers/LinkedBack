@@ -105,12 +105,12 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = '__all__'
 
-    def validate(self, data):
-        project = data['project']
-        if data['owner'] == project.owner:
-            raise serializers.ValidationError(
-                "Вы не можете оценивать собственный проект")
-        return data
+    # def validate(self, data):
+    #     project = data['project']
+    #     if data['owner'] == project.owner:
+    #         raise serializers.ValidationError(
+    #             "Вы не можете оценивать собственный проект")
+    #     return data
 
 
 class TagSerializer(serializers.ModelSerializer):
