@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -48,6 +48,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'corsheaders',
+
+    'django_extensions',
+
+    'storages',
 
     'rest_framework',
     'rest_framework_simplejwt',
@@ -206,5 +210,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 CORS_ORIGIN_ALLOW_ALL = True
+
+GRAPH_MODELS = {
+    'all_applications': True,
+    'group_models': True,
+}
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_FILE_OVERWRITE = False
+
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
