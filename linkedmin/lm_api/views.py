@@ -73,7 +73,7 @@ class ReviewAPICreate(generics.CreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
     def create(self, request, *args, **kwargs):
-        owner = Profile.objects.get(username=str(request.user))
+        owner = Profile.objects.get(owner = request.user)
         project = Project.objects.get(id=self.kwargs['pk'])
 
         review = {
