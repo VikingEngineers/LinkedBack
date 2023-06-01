@@ -40,3 +40,13 @@ class IsOwnerOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         profile = Profile.objects.get(owner=request.user)
         return bool(obj.owner == request.user or obj.owner == profile or request.user.is_staff)
+
+
+class IsOwnerOrRecipientOrAdmin(permissions.BasePermission):
+    """
+    Object-level permission to only allow owners of an object to edit it.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        profile = Profile.objects.get(owner=request.user)
+        return bool(obj.sender == profile or obj.recipient == profile or request.user.is_staff)

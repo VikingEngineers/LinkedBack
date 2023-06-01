@@ -80,12 +80,11 @@ class ReviewAPICreate(generics.CreateAPIView):
             "owner": owner.id,
             "project": project.id,
             "body": request.data['body'],
-            "value": request.data['value']
         }
         _serializer = self.serializer_class(data=review)
         if _serializer.is_valid():
             _serializer.save()
-            return Response(data=_serializer.data, status=status.HTTP_201_CREATED)  # NOQA
+            return Response(data=_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(data=_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -108,7 +107,7 @@ class ProfileAPIDetail(generics.RetrieveUpdateAPIView):
     permission_classes = (IsOwnerOrReadOnly, )
 
 
-class MessageAPIDetail(generics.ListCreateAPIView):
+class MessageAPIList(generics.ListAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = (IsOwnerOrAdmin, )
@@ -119,6 +118,34 @@ class MessageAPIDetail(generics.ListCreateAPIView):
             Q(sender=user) |
             Q(recipient=user)
         )
+    
+class MessageAPICreate(generics.CreateAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+    def create(self, request, *args, **kwargs):
+        owner = Profile.objects.get(owner = request.user)
+
+        message = {
+            "sender": owner.id,
+            "recipient": request.data['recipient'],
+            "name": request.data['name'],
+            "email": request.data['email'],
+            "subject": request.data['subject'],
+            "body": request.data['body'],
+        }
+        _serializer = self.serializer_class(data=message)
+        if _serializer.is_valid():
+            _serializer.save()
+            return Response(data=_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data=_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MessageAPIDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = (IsOwnerOrRecipientOrAdmin, )
 
 
 class SearchProjectsAPIList(generics.ListAPIView):
