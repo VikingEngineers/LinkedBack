@@ -30,6 +30,22 @@ class ProjectAPIDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectSerializer
     permission_classes = (IsOwnerOrReadOnly, )
 
+class LikeProject(generics.UpdateAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+    def update(self, request, *args, **kwargs):
+        project = Project.objects.get(id=self.kwargs['pk'])
+        profile = Profile.objects.get(owner = request.user)
+        
+        if not project.likes.contains(profile):
+            project.likes.add(profile)
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            project.likes.remove(profile)
+            return Response(status=status.HTTP_200_OK)
+        
 
 # get a list of all projects
 class ProjectAPIList(generics.ListAPIView):

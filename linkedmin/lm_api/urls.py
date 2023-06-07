@@ -13,6 +13,8 @@ urlpatterns = [
     path('api/projects/', ProjectAPIList.as_view(), name='projects'),
     path('api/projects/create/', ProjectAPICreate.as_view(), name='create_project'),
     path('api/projects/<str:pk>/', ProjectAPIDetail.as_view(), name='project'),
+    path('api/projects/<str:pk>/like/',
+         LikeProject.as_view(), name='like_project'),
 
     path('api/projects/<str:pk>/reviews/',
          ReviewAPIList.as_view(), name='project_reviews'),
