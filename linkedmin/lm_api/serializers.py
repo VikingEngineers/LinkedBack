@@ -133,7 +133,6 @@ class ProjectSerializer(serializers.ModelSerializer):
             form = ProjectForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            form.save_m2m()
 
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
