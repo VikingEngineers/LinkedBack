@@ -93,7 +93,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def patch(self, request, *args, **kwargs):
         form = ProfileForm(request.POST)
-
         if request.FILES:
             form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -120,6 +119,10 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    likes = serializers.PrimaryKeyRelatedField(many=True, 
+                                               queryset=Profile.objects.all(), 
+                                               default=[])
+
     class Meta:
         model = Project
         fields = '__all__'
