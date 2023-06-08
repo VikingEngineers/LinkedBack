@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from lm_users.forms import SkillForm
 from lm_projects.forms import ProjectForm
 from lm_users.forms import ProfileForm
 from lm_projects.models import Project, Tag, Review
@@ -139,10 +138,6 @@ class SkillSerializer(serializers.ModelSerializer):
         model = Skill
         fields = '__all__'  
 
-    def patch(self, request, *args, **kwargs):
-        form = SkillForm(request.POST)
-        if form.is_valid():
-            form.save()
 
 class MessageSerializer(serializers.ModelSerializer):
 
