@@ -163,6 +163,13 @@ class MessageAPIDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MessageSerializer
     permission_classes = (IsOwnerOrRecipientOrAdmin, )
 
+    def perform_update(self, serializer):
+        instance = self.get_object()
+        if not instance.is_read:
+            updated_instance = serializer.save(is_read = True)
+        else:
+            updated_instance = serializer.save()
+
 
 class SkillAPIList(generics.ListAPIView):
     queryset = Skill.objects.all()

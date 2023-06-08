@@ -145,8 +145,3 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         fields = "__all__"
 
-    def patch(self, request, *args, **kwargs):
-        if self.is_read == False:
-            self.is_read = True
-            self.save()
-        return self
