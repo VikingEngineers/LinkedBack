@@ -122,6 +122,9 @@ class ProjectSerializer(serializers.ModelSerializer):
     likes = serializers.PrimaryKeyRelatedField(many=True, 
                                                queryset=Profile.objects.all(), 
                                                default=[])
+    tagss = serializers.PrimaryKeyRelatedField(many=True, 
+                                               queryset=Tag.objects.all(), 
+                                               default=[])
 
     class Meta:
         model = Project
@@ -133,6 +136,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             form = ProjectForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            form.save_m2m()
 
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
