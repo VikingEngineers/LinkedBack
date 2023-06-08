@@ -125,8 +125,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def patch(self, request, *args, **kwargs):
-
-        form = ProjectForm(request.POST, request.FILES)
+        form = ProjectForm(request.POST)
         if request.FILES:
             form = ProjectForm(request.POST, request.FILES)
 
