@@ -33,6 +33,10 @@ urlpatterns = [
     path('api/messages/create/', MessageAPICreate.as_view(), name='create_message'),
     path('api/messages/<str:pk>/', MessageAPIDetail.as_view(), name='message'),
 
+    path('api/profile/<str:pk>/skills/', SkillAPIList.as_view(), name='skills'),
+    path('api/skills/create/', SkillAPICreate.as_view(), name='create_skill'),
+    path('api/skills/<str:pk>/', SkillAPIDetail.as_view(), name='skill'),
+
     path('api/search/projects/', SearchProjectsAPIList.as_view(),
          name='search_projects'),
     path('api/search/profiles/', SearchProfilesAPIList.as_view(),

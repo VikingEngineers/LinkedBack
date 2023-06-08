@@ -2,7 +2,7 @@
 
 from django.forms import ModelForm
 
-from lm_users.models import Profile
+from lm_users.models import Profile, Skill
 
 
 class ProfileForm(ModelForm):
@@ -12,3 +12,9 @@ class ProfileForm(ModelForm):
                   'location', 'bio', 'short_intro', 'profile_image',
                   'social_github', 'social_vk', 'social_twitter',
                   'social_youtube', 'social_website']
+
+
+class SkillForm(ModelForm):
+    class Meta:
+        model = Skill
+        fields = ['name', 'description']

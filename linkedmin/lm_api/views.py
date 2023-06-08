@@ -9,7 +9,7 @@ from .serializers import *
 from .permissions import *
 
 from lm_projects.models import Project, Tag, Review
-from lm_users.models import Profile
+from lm_users.models import Profile, Skill
 
 from django.db.models import Q
 
@@ -162,6 +162,42 @@ class MessageAPIDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = (IsOwnerOrRecipientOrAdmin, )
+
+
+class SkillAPIList(generics.ListAPIView):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+#    permission_classes = (IsOwnerOrReadOnly, )
+
+    def get_queryset(self):
+        profile = Profile.objects.get(owner=self.kwargs['pk'])
+        return self.queryset.filter(owner = profile)
+        
+
+class SkillAPICreate(generics.CreateAPIView):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+    def create(self, request, *args, **kwargs):
+        owner = Profile.objects.get(owner = request.user)
+
+        skill = {
+            "owner": owner.id,
+            "name": request.data['name'],
+            "description": request.data['description'],
+        }
+        _serializer = self.serializer_class(data=skill)
+        if _serializer.is_valid():
+            _serializer.save()
+            return Response(data=_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data=_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class SkillAPIDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+    permission_classes = (IsOwnerOrAdmin, )
 
 
 class SearchProjectsAPIList(generics.ListAPIView):

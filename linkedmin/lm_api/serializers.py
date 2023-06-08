@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from lm_users.forms import SkillForm
 from lm_projects.forms import ProjectForm
 from lm_users.forms import ProfileForm
 from lm_projects.models import Project, Tag, Review
-from lm_users.models import Profile, Message
+from lm_users.models import Profile, Message, Skill
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -133,7 +134,15 @@ class ProjectSerializer(serializers.ModelSerializer):
         if form.is_valid():
             form.save()
 
+class SkillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Skill
+        fields = '__all__'  
 
+    def patch(self, request, *args, **kwargs):
+        form = SkillForm(request.POST)
+        if form.is_valid():
+            form.save()
 
 class MessageSerializer(serializers.ModelSerializer):
 
