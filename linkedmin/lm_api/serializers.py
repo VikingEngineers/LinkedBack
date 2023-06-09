@@ -122,7 +122,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     likes = serializers.PrimaryKeyRelatedField(many=True, 
                                                queryset=Profile.objects.all(), 
                                                default=[])
-    tagss = serializers.PrimaryKeyRelatedField(many=True, 
+    tags = serializers.PrimaryKeyRelatedField(many=True, 
                                                queryset=Tag.objects.all(), 
                                                default=[])
 
