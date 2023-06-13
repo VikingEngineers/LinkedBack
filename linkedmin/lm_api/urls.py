@@ -13,6 +13,8 @@ urlpatterns = [
     path('api/projects/', ProjectAPIList.as_view(), name='projects'),
     path('api/projects/create/', ProjectAPICreate.as_view(), name='create_project'),
     path('api/projects/<str:pk>/', ProjectAPIDetail.as_view(), name='project'),
+    path('api/projects/<str:pk>/like/',
+         LikeProject.as_view(), name='like_project'),
 
     path('api/projects/<str:pk>/reviews/',
          ReviewAPIList.as_view(), name='project_reviews'),
@@ -27,7 +29,13 @@ urlpatterns = [
     path('api/profiles/', ProfileAPIList.as_view(), name='profiles'),
     path('api/profile/<str:pk>/', ProfileAPIDetail.as_view(), name='profile'),
 
-    path('api/messages/', MessageAPIDetail.as_view(), name='messages'),
+    path('api/messages/', MessageAPIList.as_view(), name='messages'),
+    path('api/messages/create/', MessageAPICreate.as_view(), name='create_message'),
+    path('api/messages/<str:pk>/', MessageAPIDetail.as_view(), name='message'),
+
+    path('api/profile/<str:pk>/skills/', SkillAPIList.as_view(), name='skills'),
+    path('api/skills/create/', SkillAPICreate.as_view(), name='create_skill'),
+    path('api/skills/<str:pk>/', SkillAPIDetail.as_view(), name='skill'),
 
     path('api/search/projects/', SearchProjectsAPIList.as_view(),
          name='search_projects'),

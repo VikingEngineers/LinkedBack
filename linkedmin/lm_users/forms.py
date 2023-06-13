@@ -2,7 +2,7 @@
 
 from django.forms import ModelForm
 
-from lm_users.models import Profile
+from lm_users.models import Profile, Skill
 
 
 class ProfileForm(ModelForm):

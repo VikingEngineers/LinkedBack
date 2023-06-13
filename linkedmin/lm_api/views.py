@@ -9,7 +9,7 @@ from .serializers import *
 from .permissions import *
 
 from lm_projects.models import Project, Tag, Review
-from lm_users.models import Profile
+from lm_users.models import Profile, Skill
 
 from django.db.models import Q
 
@@ -30,6 +30,22 @@ class ProjectAPIDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectSerializer
     permission_classes = (IsOwnerOrReadOnly, )
 
+class LikeProject(generics.UpdateAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+    def update(self, request, *args, **kwargs):
+        project = Project.objects.get(id=self.kwargs['pk'])
+        profile = Profile.objects.get(owner = request.user)
+        
+        if not project.likes.contains(profile):
+            project.likes.add(profile)
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            project.likes.remove(profile)
+            return Response(status=status.HTTP_200_OK)
+        
 
 # get a list of all projects
 class ProjectAPIList(generics.ListAPIView):
@@ -73,19 +89,18 @@ class ReviewAPICreate(generics.CreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
     def create(self, request, *args, **kwargs):
-        owner = Profile.objects.get(username=str(request.user))
+        owner = Profile.objects.get(owner = request.user)
         project = Project.objects.get(id=self.kwargs['pk'])
 
         review = {
             "owner": owner.id,
             "project": project.id,
             "body": request.data['body'],
-            "value": request.data['value']
         }
         _serializer = self.serializer_class(data=review)
         if _serializer.is_valid():
             _serializer.save()
-            return Response(data=_serializer.data, status=status.HTTP_201_CREATED)  # NOQA
+            return Response(data=_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(data=_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -108,7 +123,7 @@ class ProfileAPIDetail(generics.RetrieveUpdateAPIView):
     permission_classes = (IsOwnerOrReadOnly, )
 
 
-class MessageAPIDetail(generics.ListCreateAPIView):
+class MessageAPIList(generics.ListAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = (IsOwnerOrAdmin, )
@@ -119,6 +134,77 @@ class MessageAPIDetail(generics.ListCreateAPIView):
             Q(sender=user) |
             Q(recipient=user)
         )
+    
+class MessageAPICreate(generics.CreateAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+    def create(self, request, *args, **kwargs):
+        owner = Profile.objects.get(owner = request.user)
+
+        message = {
+            "sender": owner.id,
+            "recipient": request.data['recipient'],
+            "name": request.data['name'],
+            "email": request.data['email'],
+            "subject": request.data['subject'],
+            "body": request.data['body'],
+        }
+        _serializer = self.serializer_class(data=message)
+        if _serializer.is_valid():
+            _serializer.save()
+            return Response(data=_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data=_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MessageAPIDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = (IsOwnerOrRecipientOrAdmin, )
+
+    def perform_update(self, serializer):
+        instance = self.get_object()
+        if not instance.is_read:
+            updated_instance = serializer.save(is_read = True)
+        else:
+            updated_instance = serializer.save()
+
+
+class SkillAPIList(generics.ListAPIView):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+#    permission_classes = (IsOwnerOrReadOnly, )
+
+    def get_queryset(self):
+        profile = Profile.objects.get(owner=self.kwargs['pk'])
+        return self.queryset.filter(owner = profile)
+        
+
+class SkillAPICreate(generics.CreateAPIView):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+    def create(self, request, *args, **kwargs):
+        owner = Profile.objects.get(owner = request.user)
+
+        skill = {
+            "owner": owner.id,
+            "name": request.data['name'],
+            "description": request.data['description'],
+        }
+        _serializer = self.serializer_class(data=skill)
+        if _serializer.is_valid():
+            _serializer.save()
+            return Response(data=_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data=_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class SkillAPIDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+    permission_classes = (IsOwnerOrAdmin, )
 
 
 class SearchProjectsAPIList(generics.ListAPIView):

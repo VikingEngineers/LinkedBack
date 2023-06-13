@@ -3,7 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from lm_projects.forms import ProjectForm
 from lm_users.forms import ProfileForm
 from lm_projects.models import Project, Tag, Review
-from lm_users.models import Profile, Message
+from lm_users.models import Profile, Message, Skill
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -93,11 +93,10 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def patch(self, request, *args, **kwargs):
         form = ProfileForm(request.POST)
-
         if request.FILES:
             form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save
+            form.save()
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -120,17 +119,29 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    likes = serializers.PrimaryKeyRelatedField(many=True, 
+                                               queryset=Profile.objects.all(), 
+                                               default=[])
+    tags = serializers.PrimaryKeyRelatedField(many=True, 
+                                               queryset=Tag.objects.all(), 
+                                               default=[])
+
     class Meta:
         model = Project
         fields = '__all__'
 
     def patch(self, request, *args, **kwargs):
+        form = ProjectForm(request.POST)
         if request.FILES:
             form = ProjectForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            form.save_m2m()
 
-            if form.is_valid():
-                form.save
-
+class SkillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Skill
+        fields = '__all__'  
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -138,3 +149,4 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = "__all__"
+
