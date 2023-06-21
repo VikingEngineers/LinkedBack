@@ -29,6 +29,7 @@ class ProjectAPIDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = (IsOwnerOrReadOnly, )
+    
 
 class LikeProject(generics.UpdateAPIView):
     queryset = Project.objects.all()
