@@ -29,7 +29,7 @@ class ProjectAPIDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = (IsOwnerOrReadOnly, )
-    
+
 
 class LikeProject(generics.UpdateAPIView):
     queryset = Project.objects.all()
@@ -38,15 +38,15 @@ class LikeProject(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         project = Project.objects.get(id=self.kwargs['pk'])
-        profile = Profile.objects.get(owner = request.user)
-        
+        profile = Profile.objects.get(owner=request.user)
+
         if not project.likes.contains(profile):
             project.likes.add(profile)
             return Response(status=status.HTTP_201_CREATED)
         else:
             project.likes.remove(profile)
             return Response(status=status.HTTP_200_OK)
-        
+
 
 # get a list of all projects
 class ProjectAPIList(generics.ListAPIView):
@@ -90,7 +90,7 @@ class ReviewAPICreate(generics.CreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
     def create(self, request, *args, **kwargs):
-        owner = Profile.objects.get(owner = request.user)
+        owner = Profile.objects.get(owner=request.user)
         project = Project.objects.get(id=self.kwargs['pk'])
 
         review = {
@@ -135,14 +135,15 @@ class MessageAPIList(generics.ListAPIView):
             Q(sender=user) |
             Q(recipient=user)
         )
-    
+
+
 class MessageAPICreate(generics.CreateAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
     def create(self, request, *args, **kwargs):
-        owner = Profile.objects.get(owner = request.user)
+        owner = Profile.objects.get(owner=request.user)
 
         message = {
             "sender": owner.id,
@@ -159,6 +160,7 @@ class MessageAPICreate(generics.CreateAPIView):
         else:
             return Response(data=_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class MessageAPIDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
@@ -167,7 +169,7 @@ class MessageAPIDetail(generics.RetrieveUpdateDestroyAPIView):
     def perform_update(self, serializer):
         instance = self.get_object()
         if not instance.is_read:
-            updated_instance = serializer.save(is_read = True)
+            updated_instance = serializer.save(is_read=True)
         else:
             updated_instance = serializer.save()
 
@@ -179,8 +181,8 @@ class SkillAPIList(generics.ListAPIView):
 
     def get_queryset(self):
         profile = Profile.objects.get(owner=self.kwargs['pk'])
-        return self.queryset.filter(owner = profile)
-        
+        return self.queryset.filter(owner=profile)
+
 
 class SkillAPICreate(generics.CreateAPIView):
     queryset = Skill.objects.all()
@@ -188,7 +190,7 @@ class SkillAPICreate(generics.CreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
     def create(self, request, *args, **kwargs):
-        owner = Profile.objects.get(owner = request.user)
+        owner = Profile.objects.get(owner=request.user)
 
         skill = {
             "owner": owner.id,
@@ -201,6 +203,7 @@ class SkillAPICreate(generics.CreateAPIView):
             return Response(data=_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(data=_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class SkillAPIDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Skill.objects.all()
@@ -241,37 +244,3 @@ class SearchProfilesAPIList(generics.ListAPIView):
             Q(name__icontains=search_query) |
             Q(username__icontains=search_query)
         )
-
-
-@api_view(['GET'])
-def getRoutes(request):
-    routes = [
-        {'POST': 'api/users/token/'}, #авторизация
-        {'POST': 'api/users/token/refresh/'}, #рефреш токена авторизации (пока не используется)
-
-        {'GET': 'api/projects/'}, #список всех проектов
-        {'POST': 'api/projects/create/'}, #создание проекта
-
-        {'GET': 'api/projects/<str:pk>'}, #инфа о проекте (по айди)
-        {'PATCH': 'api/projects/<str:pk>'}, #редактировать проект
-        {'DELETE': 'api/projects/<str:pk>'}, #удалить проект
-
-        {'GET': 'api/projects/<str:pk>/reviews/'},
-
-        {'GET': 'api/review/<str:pk>/'},
-        {'DELETE': 'api/review/<str:pk>/'},
-
-        {'GET': 'api/tags/'},
-        {'POST': 'api/tags/create'},
-
-        {'GET': 'api/profiles/'},
-        {'GET': 'api/profiles/<str:pk>/'},
-        {'PATCH': 'api/profiles/<str:pk>/'},
-
-        {'GET': 'api/messages/'},
-
-        {'GET': 'api/search/projects/'},
-        {'GET': 'api/search/profiles/'},
-    ]
-
-    return Response(routes)

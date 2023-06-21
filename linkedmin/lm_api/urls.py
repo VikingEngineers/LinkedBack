@@ -4,7 +4,6 @@ from .views import *
 
 urlpatterns = [
 
-    path('', getRoutes, name='api_routes'),
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
@@ -41,6 +40,4 @@ urlpatterns = [
          name='search_projects'),
     path('api/search/profiles/', SearchProfilesAPIList.as_view(),
          name='search_profiles'),
-
-
 ]
